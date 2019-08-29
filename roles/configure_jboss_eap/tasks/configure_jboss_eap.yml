@@ -1,0 +1,29 @@
+---
+# The lineinfile module can be used to add a line to a file on the target host.
+- name: Set Web Bind Address
+  become_user: "{{ jboss_eap_user }}"
+  become: true
+  lineinfile:
+    dest: "{{ jboss_eap_runtime_conf_file }}"
+    line: JAVA_OPTS="$JAVA_OPTS -Djboss.bind.address={{jboss_eap_bind_web_address}}"
+
+- name: Set Management Bind Address
+  become_user: "{{ jboss_eap_user }}"
+  become: true
+  lineinfile:
+    dest: "{{ jboss_eap_runtime_conf_file }}"
+    line: JAVA_OPTS="$JAVA_OPTS -Djboss.bind.address.management={{jboss_eap_bind_management_address}}"
+
+- name: Set User Time Zone for Logs
+  become_user: "{{ jboss_eap_user }}"
+  become: true
+  lineinfile:
+    dest: "{{ jboss_eap_runtime_conf_file }}"
+    line: "JAVA_OPTS=\"$JAVA_OPTS -Duser.timezone={{jboss_eap_logging_timezone}}\""
+
+# The command module is a simple catch-all module that provides for executing
+# any shell command on the target host.
+- name: Add JBoss Server admin user
+  become_user: "{{ jboss_eap_user }}"
+  become: true
+  command: ' {{jboss_eap_bin_dir}}/add-user.sh -u admin -p admin@123 '

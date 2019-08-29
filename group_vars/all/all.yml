@@ -1,22 +1,22 @@
-ansible_rhel_user: root
-eap_java_pkg_name: java-1.8.0-openjdk
-transfer_method: copy-from-controller
-
-jboss_java_pkg_name: java-1.8.0-openjdk
-install_java: true
-
-jboss_eap_artifact_name: jboss-eap-6.4.0.zip  #jboss-eap-7.2.0.zip #jboss-eap-6.4.0.zip
-jboss_eap_patch_artifact_name: jboss-eap-6.4.7-patch.zip #jboss-eap-7.2.1-patch.zip #jboss-eap-6.4.7-patch.zip
-jboss_eap_logging_timezone: America/Chicago
+---
+# User that will own the directories and files for the installation
+# User that will run JBoss EAP as a service.
+jboss_eap_user: "jboss-as"
+# Group that the JBoss EAP user will be a memeber of
+jboss_eap_group: "{{ jboss_eap_user }}"
+# Version of JBoss EAP to install
+jboss_eap_base_version: "6.4"
+jboss_eap_full_version: "{{jboss_eap_base_version}}.0"
+jboss_eap_config: "standalone.xml"
+jboss_eap_mode: "standalone"
+jboss_eap_artifact_name: "eap-{{jboss_eap_base_version}}.0.zip"
+jboss_install_artifact_src: "https://nexus.discoverfinancial.com:8443/content/repositories/middlewareengineering/org/jboss/eap/{{jboss_eap_full_version}}/{{jboss_eap_artifact_name}}"
+jboss_eap_apply_patch: "false"
+jboss_eap_patch_artifact_name: "jboss-eap-6.4.7-patch.zip"
+jboss_patch_artifact_src: "https://nexus.discoverfinancial.com:8443/content/repositories/middlewareengineering/org/jboss/jboss-eap/{{jboss_eap_patch_version}}/{{jboss_eap_patch_artifact_name}}"
+deployment_artifact_src: "https://nexus.discoverfinancial.com:8443/service/local/repositories/middlewareengineering/content/org/apache/sample/1.0/sample-1.0.war"
 jboss_eap_bind_web_interface: true
+jboss_eap_bind_web_address: "0.0.0.0"
 jboss_eap_bind_management_interface: true
-jboss_eap_apply_patch: true
-
-jboss_eap_user: jboss-as
-
-jboss_eap_config: standalone.xml
-jboss_eap_mode: standalone
-jboss_eap_bind_web_address: 0.0.0.0
-jboss_eap_bind_management_address: 0.0.0.0
-# Set this value that will suffix jboss-eap in the archive folder e.g. jboss-eap-6.4
-jboss_eap_base_version: 6.4
+jboss_eap_bind_management_address: "0.0.0.0"
+jboss_eap_logging_timezone: "America/Chicago"

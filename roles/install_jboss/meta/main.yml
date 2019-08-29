@@ -1,0 +1,7 @@
+---
+# Roles work very similarly to software libraries.
+# Roles can be dependent on other Role.
+# Declaring that dependency here ensures that Ansible will check for the
+# dependency during execution.
+dependencies:
+  - { role: install_packages }

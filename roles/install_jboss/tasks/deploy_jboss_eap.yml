@@ -1,0 +1,17 @@
+---
+
+- name: Deploy JBoss EAP
+  block:
+  - name: Extract JBoss EAP Libraries
+    unarchive:
+      src: "{{ jboss_install_artifact_src }}"
+      dest: "{{ jboss_eap_library_dest }}"
+      creates: jboss-eap-6.4.0
+      copy: no
+      owner: "{{ jboss_eap_user }}"
+      group: "{{ jboss_eap_group }}"
+    tags:
+      - jboss_eap
+  when: jboss_eap_exists.stat.exists == false
+  become: true
+  become_user: root

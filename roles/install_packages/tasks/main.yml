@@ -1,0 +1,9 @@
+---
+# The best way to install Red Hat software is through the package manager.
+# This process should be used
+- name: Install Packages
+  become: true
+  become_user: root
+  yum:
+    name: "{{packages_to_install}}"
+    state: installed

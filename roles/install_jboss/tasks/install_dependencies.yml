@@ -1,0 +1,11 @@
+---
+# Variables can be set when importing a role to be used by that role.
+# In this case the variales can be hard coded to enforce their usage when other
+# developers reuse this role.
+- name: Install Dependencies
+  include_role:
+    name: install_packages
+  vars:
+    packages_to_install:
+      - java-1.8.0-openjdk
+      - unzip

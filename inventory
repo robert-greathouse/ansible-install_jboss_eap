@@ -1,2 +1,21 @@
+# Inventory files allow for grouping target hosts for easy reference in playbooks
+
+# This group is for install JBoss EAP
+
+# Ansible variable can be set on the command line, properties files, playbooks
+# or here in the inventory file.
+
+# Variables specific to the host should be set in the inventory file or the
+# inventory entry in Ansible Tower
+
+# The ansible_become_exe variable tells Ansible which command to use to switch
+# to another user
+
+# The ansible_user variable tells Ansible which user to use to login to target hosts
+
+# The ansible_become_flags variable tells Ansible which arguments to pass to the
+# ansible_become_exe when switching users.
+# This is required when using dzdo on DFS systems to ensure the proper shell
+# settings are loaded.
 [jboss_eap_rhel_hosts]
-localhost
+localhost ansible_become_exe=dzdo ansible_user=rgreath ansible_become_flags="-H -S -n -i" ansible_become_password=

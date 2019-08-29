@@ -1,0 +1,73 @@
+---
+# all is a implicit host group that targets all entries in the inventory.
+- hosts: all
+# Facts about the hosts is not required for this playbook
+  gather_facts: false
+
+  tasks:
+
+# It is possible to set variables during the execution of the playbook.
+# The set_facts tasks allows executing more complex operations when setting a variable.
+  - name: Set JBoss EAP Install Facts
+    set_fact:
+      jboss_eap_library_dest: "/opt/{{ jboss_eap_user }}"
+      jboss_eap_service_conf_dir: "/etc/{{ jboss_eap_user }}"
+      jboss_eap_service_log_dir: "/var/log/{{ jboss_eap_user }}"
+      jboss_eap_service_data_dir: "/var/run/{{ jboss_eap_user }}"
+      jboss_eap_service_conf_file_name: "{{ jboss_eap_user }}.conf"
+
+  - name: Set JBoss EAP Home Path
+    set_fact:
+      jboss_eap_home: "{{ jboss_eap_library_dest }}/jboss-eap-{{jboss_eap_base_version}}"
+
+  - name: Set JBoss EAP bin Path
+    set_fact:
+      jboss_eap_bin_dir: "{{ jboss_eap_home }}/bin"
+
+  - name: Set JBoss EAP Service Files Facts
+    set_fact:
+      jboss_eap_service_conf_file: "{{ jboss_eap_service_conf_dir }}/{{jboss_eap_service_conf_file_name}}"
+      jboss_eap_runtime_conf_file: "{{ jboss_eap_home }}/bin/standalone.conf"
+      jboss_eap_service_file: jboss-as-standalone.sh
+
+  - name: Set JBoss EAP Service Name EL 6
+    set_fact:
+      jboss_eap_service_name: "{{jboss_eap_service_file | splitext | first }}"
+
+# Roles can be used to encapsulate tasks into reuable components
+
+  - include_role:
+      name: create_users
+
+  - include_role:
+      name: install_jboss
+
+  - include_role:
+      name: configure_jboss_eap
+
+# For simple tasks you can opt to include them directly in the playbook instead
+# of defining them in a Role. Simply depends on how often these will be reused.
+
+  - name: Deploy Application
+    become_user: "{{ jboss_eap_user }}"
+    become: true
+    get_url:
+      url: "{{deployment_artifact_src}}"
+      dest: "{{jboss_eap_home}}/standalone/deployments/sample.war"
+      owner: "{{ jboss_eap_user }}"
+      group: "{{ jboss_eap_group }}"
+
+# If a task requires different privileges to execute then other tasks you can
+# include the become_user and become variables directly in the task.
+  - name: Restart jboss-as Service
+    become_user: root
+    become: true
+    service:
+      name: "{{ jboss_eap_service_name }}"
+      state: restarted
+    tags:
+      - jboss_eap
+
+  - name: Check jboss-as is available
+    uri:
+      url: "http://{{jboss_eap_bind_web_address}}:8080"

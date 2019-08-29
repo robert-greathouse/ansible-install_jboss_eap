@@ -1,0 +1,6 @@
+---
+# Similar to how Roles can be imported, tasks from other files can also be included.
+# This allows for more modular development similar to using different source
+# code files.
+- name: Create User
+  include_tasks: create_users.yml

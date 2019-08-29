@@ -1,0 +1,57 @@
+---
+
+- name: Install JBoss EAP as a service
+  block:
+  - name: Copy JBoss EAP Service Conf File
+    become_user: root
+    become: true
+    template:
+      owner: "{{ jboss_eap_user }}"
+      group: "{{ jboss_eap_group }}"
+      src: jboss-as.conf.j2
+      dest: "{{ jboss_eap_service_conf_file }}"
+      backup: yes
+      mode: "755"
+    tags:
+      - jboss_eap
+
+  - name: Set JBOSS_USER in service script
+    lineinfile:
+      path: "{{jboss_eap_bin_dir}}/init.d/{{jboss_eap_service_file}}"
+      firstmatch: yes
+      insertafter: 'CMD_PREFIX='''''
+      line: 'JBOSS_USER={{jboss_eap_user}}'
+
+  - name: Set OLDPWD in service script
+    lineinfile:
+      path: "{{jboss_eap_bin_dir}}/init.d/{{jboss_eap_service_file}}"
+      firstmatch: yes
+      insertafter: 'CMD_PREFIX='''''
+      line: 'OLDPWD=~/'
+
+  - name: Copy JBoss EAP Service File
+    copy:
+      src: "{{jboss_eap_bin_dir}}/init.d/{{jboss_eap_service_file}}"
+      dest: /etc/init.d/{{jboss_eap_service_name}}
+      remote_src: True
+      owner: "{{ jboss_eap_user }}"
+      group: "{{ jboss_eap_group }}"
+      mode: "755"
+    tags:
+      - jboss_eap
+
+  - name: Add jboss-as Service
+    command: "chkconfig --add {{jboss_eap_service_name}}"
+    tags:
+      - jboss_eap
+
+  - name: Enable jboss-as Service
+    service:
+      name: "{{jboss_eap_service_name}}"
+      enabled: yes
+    tags:
+      - jboss_eap
+      
+  when: jboss_eap_exists.stat.exists == false
+  become: true
+  become_user: root

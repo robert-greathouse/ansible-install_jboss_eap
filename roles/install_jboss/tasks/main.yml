@@ -1,0 +1,12 @@
+---
+# Similar to how Roles can be imported, tasks from other files can also be included.
+# This allows for more modular development similar to using different source
+# code files.
+- name: Install Dependencies
+  include_tasks: install_dependencies.yml
+- name: Create FileSystem
+  include_tasks: create_filesystem.yml
+- name: Deploy JBoss EAP
+  include_tasks: deploy_jboss_eap.yml
+- name: Install JBoss as a service
+  include_tasks: install_jboss_eap_as_service.yml

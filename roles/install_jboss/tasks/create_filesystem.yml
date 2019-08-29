@@ -1,0 +1,63 @@
+---
+
+- name: Check Existence of Libraries
+  become_user: root
+  become: true
+  stat:
+    path: "{{jboss_eap_library_dest}}/{{ jboss_eap_full_version}}/version.txt"
+  register: jboss_eap_exists
+  tags:
+    - jboss_eap
+
+- name: Creat filesystem for JBoss EAP
+  block:
+  - name: Create JBoss EAP Library Destination
+#    become_user: root
+#    become: true
+    file:
+      path: "{{ jboss_eap_library_dest }}"
+      owner: "{{ jboss_eap_user }}"
+      group: "{{ jboss_eap_group }}"
+      state: directory
+      mode: "755"
+    tags:
+    - jboss_eap
+
+  - name: Create JBoss EAP Service Log Directory
+#    become_user: root
+#    become: true
+    file:
+      path: "{{ jboss_eap_service_log_dir }}"
+      owner: "{{ jboss_eap_user }}"
+      group: "{{ jboss_eap_group }}"
+      state: directory
+      mode: "755"
+    tags:
+      - jboss_eap
+
+  - name: Create JBoss EAP Service Runtime Data Directory
+#    become_user: root
+#    become: true
+    file:
+      path: "{{ jboss_eap_service_data_dir }}"
+      owner: "{{ jboss_eap_user }}"
+      group: "{{ jboss_eap_group }}"
+      state: directory
+      mode: "755"
+    tags:
+      - jboss_eap
+
+  - name: Create JBoss EAP Service Conf Directory
+#    become_user: root
+#    become: true
+    file:
+      path: "{{ jboss_eap_service_conf_dir }}"
+      owner: "{{ jboss_eap_user }}"
+      group: "{{ jboss_eap_group }}"
+      state: directory
+      mode: "755"
+    tags:
+      - jboss_eap
+  when: not jboss_eap_exists.stat.exists | bool
+  become: true
+  become_user: root
